@@ -2,9 +2,7 @@
 
 ## Setup
 
-Edit `playlists.js` to set the Spotify playlists that you want to download. A playlist's `id` can be found by copying
-the link. It will be in the form `https://open.spotify.com/playlist/< id >?si=< ... >`. It should be a 22 character
-string after `/playlist/` and before `?si=` consisting of numbers and letters only.
+Edit `playlists.js` to set the Spotify playlists that you want to download.
 
 ## Run
 

@@ -8,6 +8,7 @@ import { normalise } from './normalise.js';
 import { useNormalisation } from './config.js';
 
 for (const playlist of playlists) {
+  playlist.id = playlist.url.split('/playlist/')[1].split('?')[0];
   await processPlaylist(playlist);
 }
 

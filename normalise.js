@@ -9,13 +9,20 @@ const target = -12;
 
 export async function normalise(playlist, filename, ytid) {
   process.stdout.write(`Reading RMS ... `);
-  const path = `download/${playlist.name}/${filename} [${ytid}].flac`;
-  const rms = await getStat('RMS lev dB', path);
-  const peak = await getStat('Pk lev dB', path);
-  const dbChange = Math.min(-peak, target - rms);
-  const mult = Math.pow(10, dbChange / 20);
-  // process.stdout.write(`rms ${rms} peak ${peak} dbChange ${dbChange} `)
-  await normaliseFile(path, mult);
+
+  try {
+    const path = `download/${playlist.name}/${filename} [${ytid}].flac`;
+    const rms = await getStat('RMS lev dB', path);
+    const peak = await getStat('Pk lev dB', path);
+    const dbChange = Math.min(-peak, target - rms);
+    const mult = Math.pow(10, dbChange / 20);
+    // process.stdout.write(`rms ${rms} peak ${peak} dbChange ${dbChange} `)
+    await normaliseFile(path, mult);
+  } catch (e) {
+    process.stdout.write('Failed, retrying in 10s ... ');
+    await new Promise(resolve => setTimeout(resolve, 10000));
+    return await normalise(playlist, filename, ytid);
+  }
 }
 
 async function getStat(statName, path) {

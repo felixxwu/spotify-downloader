@@ -39,8 +39,5 @@ export function getDownloadedFiles(playlist) {
 }
 
 export function getSafeFilename(filename) {
-  return filename
-    .replace(/[^a-z0-9 \[\]()]]/gi, '_')
-    .replaceAll('/', '_')
-    .replaceAll(':', '_');
+  return filename.replace(/[^a-zA-Z0-9\-\[\]\(\),]+/g, ' ');
 }
