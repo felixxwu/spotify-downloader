@@ -1,4 +1,5 @@
 import { getToken } from './getToken.js'
+import { getSafeFilename } from './ytdlp.js'
 
 const v1 = 'https://api.spotify.com/v1'
 
@@ -52,7 +53,7 @@ export async function listSpotifyPlaylistTracks(playlistId) {
   return items.filter(Boolean).map(item => {
     return ({
       spid: item.track.id,
-      name: `${item.track?.artists?.map(artist => artist.name)} - ${item.track.name}`,
+      name: getSafeFilename(`${item.track?.artists?.map(artist => artist.name)} - ${item.track.name}`),
     })
   })
 }

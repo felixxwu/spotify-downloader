@@ -1,7 +1,7 @@
 import { listSpotifyPlaylistTracks } from './spotify.js'
 import { playlists } from './playlists.js'
 import { getDownloadedFiles, ytdlp } from './ytdlp.js'
-import { searchYouTube } from './youtube.js'
+import { getMapping, searchYouTube } from './youtube.js'
 import fs from 'fs'
 import process from 'node:process'
 
@@ -10,24 +10,30 @@ for (const playlist of playlists) {
 }
 
 async function processPlaylist(playlist) {
+  console.log('Processing playlist:', playlist.name)
   const spotifyTracks = await listSpotifyPlaylistTracks(playlist.id)
 
   let i = 1
   for (const track of spotifyTracks) {
 
-    process.stdout.write(`(${i++}/${spotifyTracks.length}) ${track.name}: `)
+    const numSpaces = Math.max(0, 80 - track.name.length)
+    const spaces = Array.from({ length: numSpaces }).join(' ')
+    const zeros = i < 100 ? (i < 10 ? '00' : '0') : ''
+    process.stdout.write(`(${zeros}${i++}/${spotifyTracks.length}) ${track.name} ${spaces}`)
+
     const ytid = await searchYouTube(track.name, playlist)
     await ytdlp(ytid, playlist, track.name)
     await new Promise(resolve => setTimeout(resolve, 50))
-    process.stdout.write(`Done.`)
+    process.stdout.write(`Done`)
     console.log('')
   }
 
   const downloadedFiles = getDownloadedFiles(playlist)
   for (const file of downloadedFiles) {
     if (!file.name || !file.ytid) continue
-    const foundSpotifyTrack = spotifyTracks.find((track) => track.name === file.name)
-    if (!foundSpotifyTrack) {
+    const mapping = getMapping(playlist)
+    const localTrackFound = mapping.find(localTrack => localTrack.ytid === file.ytid)
+    if (!localTrackFound) {
       console.log('Deleting:', file.name)
       fs.unlinkSync(`download/${playlist.name}/${file.name} [${file.ytid}].mp3`)
     }
