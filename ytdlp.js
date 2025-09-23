@@ -1,6 +1,7 @@
 import { exec } from 'child_process'
 import util from 'util'
 import fs from 'fs'
+import process from 'node:process'
 
 const execute = util.promisify(exec)
 
@@ -16,14 +17,13 @@ export async function ytdlp(ytid, playlist, filename) {
   if (downloadedFiles.find(file => file.ytid === ytid)) {
     return
   }
-  console.log('Downloading:', filename)
+  process.stdout.write('Downloading... ')
   try {
     await execute(`yt-dlp -t mp3 --embed-thumbnail --output "download/${playlist.name}/${filename} [${ytid}].mp3" https://www.youtube.com/watch?v=${ytid}`)
   } catch (e) {
-    console.error(e)
-    console.log('Download failed, trying again in 10s')
+    process.stdout.write('Failed, trying again in 10s... ')
     await new Promise(resolve => setTimeout(resolve, 10000))
-    ytdlp(ytid, playlist, filename)
+    await ytdlp(ytid, playlist, filename)
   }
 }
 

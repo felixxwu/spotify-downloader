@@ -1,5 +1,5 @@
-import { yt_api_key } from './secrets.js'
 import fs from 'fs'
+import process from 'node:process'
 
 export async function searchYouTube(query, playlist) {
   // const res = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${yt_api_key}&part=snippet&q=${encodeURIComponent(query)}`)
@@ -11,10 +11,9 @@ export async function searchYouTube(query, playlist) {
   // local cache hit, return early
   if (ytid) return ytid
 
-  console.log('Searching YouTube:', query)
+  process.stdout.write('Searching... ')
   fs.mkdirSync('mappings', { recursive: true })
 
-  await new Promise(resolve => setTimeout(resolve, 1000))
   const res = await fetch(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`)
   const data = await res.text()
   const queriedYTID = data.split('watch?')[1].slice(2, 13)

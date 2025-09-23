@@ -1,23 +1,24 @@
 import { getToken } from './getToken.js'
 
+const v1 = 'https://api.spotify.com/v1'
+
 /**
  * @param endpoint {string}
  * @returns {Promise<void>}
  */
 export async function spotifyAPI(endpoint) {
   console.log('Query Spotify:', endpoint)
-  await new Promise(resolve => setTimeout(resolve, 5000))
 
   try {
     const token = await getToken()
-    const response = await fetch(`https://api.spotify.com/v1/${endpoint}`, {
+    const response = await fetch(endpoint, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer  ${token}`,
       },
     })
     const data = (await response.json())
-    if (data.tracks.items) {
+    if (!data.items) {
       throw Error('Spotify failed to fetch tracks.')
     }
     return data
@@ -29,15 +30,26 @@ export async function spotifyAPI(endpoint) {
   }
 }
 
+async function fetchSpotifyUntilNextIsNull(endpoint) {
+  const data = await spotifyAPI(endpoint)
+
+  if (data.next === null) {
+    return data.items
+  } else {
+    const nextItems = await fetchSpotifyUntilNextIsNull(data.next)
+    return data.items.concat(nextItems)
+  }
+}
+
 /**
  * @param playlistId
  * @returns {Promise<{spid: string, name: string}[]>}
  */
 export async function listSpotifyPlaylistTracks(playlistId) {
-  const data = await spotifyAPI(`playlists/${playlistId}`)
-  console.log('Loaded', data.tracks.items.length, 'tracks from Spotify')
+  const items = await fetchSpotifyUntilNextIsNull(`${v1}/playlists/${playlistId}/tracks`)
+  console.log('Loaded', items.length, 'tracks from Spotify')
 
-  return data.tracks.items.map(item => {
+  return items.filter(Boolean).map(item => {
     return ({
       spid: item.track.id,
       name: `${item.track?.artists?.map(artist => artist.name)} - ${item.track.name}`,
