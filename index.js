@@ -4,6 +4,8 @@ import { getDownloadedFiles, ytdlp } from './ytdlp.js'
 import { getMapping, searchYouTube } from './youtube.js'
 import fs from 'fs'
 import process from 'node:process'
+import { normalise } from './normalise.js'
+import { useNormalisation } from './confi.sg'
 
 for (const playlist of playlists) {
   await processPlaylist(playlist)
@@ -23,6 +25,7 @@ async function processPlaylist(playlist) {
 
     const ytid = await searchYouTube(track.name, playlist)
     await ytdlp(ytid, playlist, track.name)
+    if (useNormalisation) await normalise(playlist, track.name, ytid)
     await new Promise(resolve => setTimeout(resolve, 50))
     process.stdout.write(`Done`)
     console.log('')
@@ -35,7 +38,7 @@ async function processPlaylist(playlist) {
     const localTrackFound = mapping.find(localTrack => localTrack.ytid === file.ytid)
     if (!localTrackFound) {
       console.log('Deleting:', file.name)
-      fs.unlinkSync(`download/${playlist.name}/${file.name} [${file.ytid}].mp3`)
+      fs.unlinkSync(`download/${playlist.name}/${file.name} [${file.ytid}].flac`)
     }
   }
 

@@ -47,6 +47,18 @@ Linux / MacOS
 Windows:
 `winget yt-dlp`
 
+## SoX (Sound eXchange) (optional)
+
+Windows
+https://sourceforge.net/projects/sox/
+(must be added to PATH)
+
+Linux / MacOS
+`brew install sox`
+
+Used to read the RMS of the downloaded files and normalise them. To turn off set `useNormalisation` to `false` in
+`config.js`
+
 ## Firefox (optional)
 
 yt-dlp has a workaround (https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp) to get around

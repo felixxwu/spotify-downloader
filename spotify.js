@@ -53,7 +53,7 @@ export async function listSpotifyPlaylistTracks(playlistId) {
   return items.filter(Boolean).map(item => {
     return ({
       spid: item.track.id,
-      name: getSafeFilename(`${item.track?.artists?.map(artist => artist.name)} - ${item.track.name}`),
+      name: getSafeFilename(`${item.track?.artists?.map(artist => artist.name).join(', ')} - ${item.track.name}`),
     })
   })
 }

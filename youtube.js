@@ -9,7 +9,7 @@ export async function searchYouTube(query, playlist) {
   if (ytid) return ytid
 
   try {
-    process.stdout.write('Searching >>> ')
+    process.stdout.write('Searching ... ')
     fs.mkdirSync('mappings', { recursive: true })
 
     const res = await fetch(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`)
