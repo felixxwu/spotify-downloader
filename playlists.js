@@ -12,5 +12,4 @@ export const playlists = [
   { id: '2edrfJyokLxCWXPnmkHOoa', name: 'Jungle' },
   { id: '7Cx3FApTEjoAJy5gn3m25V', name: 'Halftime - Dubstep' },
   { id: '69OyJ6mpb2InZblzSYhQsg', name: 'Grime - UKG' },
-]
-
+];

@@ -1,44 +1,44 @@
-import { getToken } from './getToken.js'
-import { getSafeFilename } from './ytdlp.js'
+import { getToken } from './getToken.js';
+import { getSafeFilename } from './ytdlp.js';
 
-const v1 = 'https://api.spotify.com/v1'
+const v1 = 'https://api.spotify.com/v1';
 
 /**
  * @param endpoint {string}
  * @returns {Promise<void>}
  */
 export async function spotifyAPI(endpoint) {
-  console.log('Query Spotify:', endpoint)
+  console.log('Query Spotify:', endpoint);
 
   try {
-    const token = await getToken()
+    const token = await getToken();
     const response = await fetch(endpoint, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer  ${token}`,
+        Authorization: `Bearer  ${token}`,
       },
-    })
-    const data = (await response.json())
+    });
+    const data = await response.json();
     if (!data.items) {
-      throw Error('Spotify failed to fetch tracks.')
+      throw Error('Spotify failed to fetch tracks.');
     }
-    return data
+    return data;
   } catch (e) {
-    console.error(e)
-    console.log('Spotify request failed, trying again in 100s')
-    await new Promise(resolve => setTimeout(resolve, 100000))
-    return spotifyAPI(endpoint)
+    console.error(e);
+    console.log('Spotify request failed, trying again in 100s');
+    await new Promise(resolve => setTimeout(resolve, 100000));
+    return spotifyAPI(endpoint);
   }
 }
 
 async function fetchSpotifyUntilNextIsNull(endpoint) {
-  const data = await spotifyAPI(endpoint)
+  const data = await spotifyAPI(endpoint);
 
   if (data.next === null) {
-    return data.items
+    return data.items;
   } else {
-    const nextItems = await fetchSpotifyUntilNextIsNull(data.next)
-    return data.items.concat(nextItems)
+    const nextItems = await fetchSpotifyUntilNextIsNull(data.next);
+    return data.items.concat(nextItems);
   }
 }
 
@@ -47,13 +47,15 @@ async function fetchSpotifyUntilNextIsNull(endpoint) {
  * @returns {Promise<{spid: string, name: string}[]>}
  */
 export async function listSpotifyPlaylistTracks(playlistId) {
-  const items = await fetchSpotifyUntilNextIsNull(`${v1}/playlists/${playlistId}/tracks`)
-  console.log('Loaded', items.length, 'tracks from Spotify')
+  const items = await fetchSpotifyUntilNextIsNull(`${v1}/playlists/${playlistId}/tracks`);
+  console.log('Loaded', items.length, 'tracks from Spotify');
 
   return items.filter(Boolean).map(item => {
-    return ({
+    return {
       spid: item.track.id,
-      name: getSafeFilename(`${item.track?.artists?.map(artist => artist.name).join(', ')} - ${item.track.name}`),
-    })
-  })
+      name: getSafeFilename(
+        `${item.track?.artists?.map(artist => artist.name).join(', ')} - ${item.track.name}`
+      ),
+    };
+  });
 }

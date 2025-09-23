@@ -1,2 +1,2 @@
-export const useFirefoxCookies = true
-export const useNormalisation = true
+export const useFirefoxCookies = true;
+export const useNormalisation = true;

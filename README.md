@@ -33,7 +33,7 @@ when the script is next run.
 
 # Dependencies
 
-## Node js
+## Node js (v20 or later)
 
 https://nodejs.org/
 
@@ -47,6 +47,12 @@ Linux / MacOS
 Windows:
 `winget yt-dlp`
 
+## ffmpeg
+
+https://ffmpeg.org/
+
+or `brew install ffmpeg`
+
 ## SoX (Sound eXchange) (optional)
 
 Windows
@@ -56,8 +62,7 @@ https://sourceforge.net/projects/sox/
 Linux / MacOS
 `brew install sox`
 
-Used to read the RMS of the downloaded files and normalise them. To turn off set `useNormalisation` to `false` in
-`config.js`
+Used to read the RMS of the downloaded files and normalise them. This option is enabled by default, to turn it off set `useNormalisation` to `false` in `config.js`
 
 ## Firefox (optional)
 
