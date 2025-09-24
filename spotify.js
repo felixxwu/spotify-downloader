@@ -1,5 +1,6 @@
 import { getSafeFilename } from './file.js';
 import { getToken } from './getToken.js';
+import { retry } from './retry.js';
 
 const v1 = 'https://api.spotify.com/v1';
 
@@ -8,9 +9,8 @@ const v1 = 'https://api.spotify.com/v1';
  * @returns {Promise<void>}
  */
 export async function spotifyAPI(endpoint) {
-  console.log('Query Spotify:', endpoint);
-
-  try {
+  return await retry(5, 10, async () => {
+    console.log('Querying Spotify:', endpoint);
     const token = await getToken();
     const response = await fetch(endpoint, {
       method: 'GET',
@@ -23,14 +23,7 @@ export async function spotifyAPI(endpoint) {
       throw Error('Spotify failed to fetch tracks.');
     }
     return data;
-  } catch (e) {
-    console.log('');
-    console.log(e);
-    console.log('');
-    console.log('Spotify request failed, trying again in 100s');
-    await new Promise(resolve => setTimeout(resolve, 100000));
-    return spotifyAPI(endpoint);
-  }
+  });
 }
 
 async function fetchSpotifyUntilNextIsNull(endpoint) {
@@ -55,7 +48,7 @@ export async function listSpotifyPlaylistTracks(playlistId) {
   return items.filter(Boolean).map(item => {
     return {
       spid: item.track.id,
-      name: getSafeFilename(`${item.track?.artists?.map(artist => artist.name).join(', ')} - ${item.track.name}`),
+      name: `${item.track?.artists?.map(artist => artist.name).join(', ')} - ${item.track.name}`,
     };
   });
 }

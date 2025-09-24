@@ -14,6 +14,7 @@ for (const playlist of playlists) {
 }
 
 async function processPlaylist(playlist) {
+  console.log('');
   console.log('Processing playlist:', playlist.name);
   const spotifyTracks = await listSpotifyPlaylistTracks(playlist.id);
 
@@ -26,8 +27,9 @@ async function processPlaylist(playlist) {
 
     const ytid = await searchYouTube(track.name, playlist);
     await ytdlp(ytid, playlist, track.name);
+
     if (useNormalisation) await normalise(playlist, track.name, ytid);
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 0));
     process.stdout.write(`Done`);
     console.log('');
   }

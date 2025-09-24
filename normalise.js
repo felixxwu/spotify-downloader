@@ -3,13 +3,13 @@ import { exec } from 'child_process';
 import util from 'util';
 import fs from 'fs';
 import { createFilePath, findFile } from './file.js';
+import { retry } from './retry.js';
+import { RMSTarget } from './config.js';
 
 const execute = util.promisify(exec);
 
-const target = -12;
-
 export async function normalise(playlist, filename, ytid) {
-  try {
+  await retry(5, 10, async () => {
     const { path, meta } = findFile(playlist, ytid);
 
     if (meta.normalised) return;
@@ -17,19 +17,12 @@ export async function normalise(playlist, filename, ytid) {
 
     const rms = await getStat('RMS lev dB', path);
     const peak = await getStat('Pk lev dB', path);
-    const dbChange = Math.min(-peak, target - rms);
+    const dbChange = Math.min(-peak, RMSTarget - rms);
     const mult = Math.pow(10, dbChange / 20);
     // process.stdout.write(`rms ${rms} peak ${peak} dbChange ${dbChange} `)
     await normaliseFile(path, mult);
     fs.renameSync(path, createFilePath(playlist, { ...meta, normalised: true }));
-  } catch (e) {
-    console.log('');
-    console.log(e);
-    console.log('');
-    process.stdout.write('Failed, retrying in 10s ... ');
-    await new Promise(resolve => setTimeout(resolve, 10000));
-    return await normalise(playlist, filename, ytid);
-  }
+  });
 }
 
 async function getStat(statName, path) {

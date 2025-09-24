@@ -7,7 +7,7 @@ export function findFile(playlist, ytid) {
 }
 
 export function createFilePath(playlist, meta) {
-  return `download/${playlist.name}/${meta.name} [${meta.ytid}${meta.normalised ? '#N' : ''}].flac`;
+  return `download/${playlist.name}/${getSafeFilename(meta.name)} [${meta.ytid}${meta.normalised ? '#N' : ''}].flac`;
 }
 
 export function getFileMeta(filePath) {

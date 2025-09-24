@@ -60,7 +60,7 @@ https://sourceforge.net/projects/sox/
 Linux / MacOS
 `brew install sox`
 
-Used to read the RMS of the downloaded files and normalise them. This option is enabled by default, to turn it off set `useNormalisation` to `false` in `config.js`
+Used to read the RMS of the downloaded files and normalise them. This option is ENABLED by default, to turn it off set `useNormalisation` to `false` in `config.js`
 
 ## Firefox (optional)
 
@@ -68,4 +68,4 @@ yt-dlp has a workaround (https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass
 YouTube's rate limits when downloading videos. Without this workaround you will only be able to download a few hundred
 videos before you get an error message saying that YouTube suspects you are a bot. To enable this workaround, just make
 sure you have Firefox installed, and that you are logged into YouTube with a Google account, Firefox does not need to be
-open. This workaround is enabled by default, to turn it off set `useFirefoxCookies` to `false` in `config.js`.
+open. This workaround is DISABLED by default, to turn it on set `useFirefoxCookies` to `true` in `config.js`.
