@@ -1,5 +1,5 @@
+import { getSafeFilename } from './file.js';
 import { getToken } from './getToken.js';
-import { getSafeFilename } from './ytdlp.js';
 
 const v1 = 'https://api.spotify.com/v1';
 
@@ -24,7 +24,9 @@ export async function spotifyAPI(endpoint) {
     }
     return data;
   } catch (e) {
-    console.error(e);
+    console.log('');
+    console.log(e);
+    console.log('');
     console.log('Spotify request failed, trying again in 100s');
     await new Promise(resolve => setTimeout(resolve, 100000));
     return spotifyAPI(endpoint);
@@ -53,9 +55,7 @@ export async function listSpotifyPlaylistTracks(playlistId) {
   return items.filter(Boolean).map(item => {
     return {
       spid: item.track.id,
-      name: getSafeFilename(
-        `${item.track?.artists?.map(artist => artist.name).join(', ')} - ${item.track.name}`
-      ),
+      name: getSafeFilename(`${item.track?.artists?.map(artist => artist.name).join(', ')} - ${item.track.name}`),
     };
   });
 }

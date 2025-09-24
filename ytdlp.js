@@ -3,6 +3,7 @@ import process from 'node:process';
 import { useFirefoxCookies } from './config.js';
 import { exec } from 'child_process';
 import util from 'util';
+import { getDownloadedFiles } from './file.js';
 
 const execute = util.promisify(exec);
 
@@ -26,18 +27,11 @@ export async function ytdlp(ytid, playlist, filename) {
     const cookies = useFirefoxCookies ? '--cookies-from-browser firefox' : '';
     await execute(`yt-dlp ${options} ${output} ${url} ${cookies}`);
   } catch (e) {
+    console.log('');
     console.log(e);
+    console.log('');
     process.stdout.write('Failed, trying again in 10s... ');
     await new Promise(resolve => setTimeout(resolve, 10000));
     await ytdlp(ytid, playlist, filename);
   }
-}
-
-export function getDownloadedFiles(playlist) {
-  const files = fs.readdirSync(`download/${playlist.name}`).filter(file => file.endsWith('.flac'));
-  return files.map(file => ({ ytid: file.slice(-17, -6), name: file.slice(0, -19) }));
-}
-
-export function getSafeFilename(filename) {
-  return filename.replace(/[^a-zA-Z0-9\-\[\]\(\),]+/g, ' ');
 }

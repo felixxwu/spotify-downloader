@@ -1,11 +1,12 @@
 import { listSpotifyPlaylistTracks } from './spotify.js';
 import { playlists } from './playlists.js';
-import { getDownloadedFiles, ytdlp } from './ytdlp.js';
+import { ytdlp } from './ytdlp.js';
 import { getMapping, searchYouTube } from './youtube.js';
 import fs from 'fs';
 import process from 'node:process';
 import { normalise } from './normalise.js';
 import { useNormalisation } from './config.js';
+import { createFilePath, getDownloadedFiles } from './file.js';
 
 for (const playlist of playlists) {
   playlist.id = playlist.url.split('/playlist/')[1].split('?')[0];
@@ -38,7 +39,7 @@ async function processPlaylist(playlist) {
     const localTrackFound = mapping.find(localTrack => localTrack.ytid === file.ytid);
     if (!localTrackFound) {
       console.log('Deleting:', file.name);
-      fs.unlinkSync(`download/${playlist.name}/${file.name} [${file.ytid}].flac`);
+      fs.unlinkSync(createFilePath(playlist, file));
     }
   }
 }

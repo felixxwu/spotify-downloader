@@ -11,9 +11,7 @@ export async function searchYouTube(query, playlist) {
     process.stdout.write('Searching ... ');
     fs.mkdirSync('mappings', { recursive: true });
 
-    const res = await fetch(
-      `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`
-    );
+    const res = await fetch(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`);
     const data = await res.text();
     const queriedYTID = data.split('watch?')[1].slice(2, 13);
     mapping.push({
@@ -24,6 +22,9 @@ export async function searchYouTube(query, playlist) {
     fs.writeFileSync(`mappings/${playlist.name}.json`, JSON.stringify(mapping), 'utf8');
     return queriedYTID;
   } catch (e) {
+    console.log('');
+    console.log(e);
+    console.log('');
     process.stdout.write('Failed, trying again in 10s... ');
     await new Promise(resolve => setTimeout(resolve, 10000));
     return await searchYouTube(query, playlist);
