@@ -1,5 +1,6 @@
-import { getSafeFilename } from './file.js';
+import { spotifyQueriesPerMinute } from './config.js';
 import { getToken } from './getToken.js';
+import { triggerRateLimiter } from './rateLimit.js';
 import { retry } from './retry.js';
 
 const v1 = 'https://api.spotify.com/v1';
@@ -10,7 +11,7 @@ const v1 = 'https://api.spotify.com/v1';
  */
 export async function spotifyAPI(endpoint) {
   return await retry(5, 10, async () => {
-    console.log('Querying Spotify:', endpoint);
+    process.stdout.write(`Querying Spotify: ${endpoint} - `);
     const token = await getToken();
     const response = await fetch(endpoint, {
       method: 'GET',
@@ -22,6 +23,9 @@ export async function spotifyAPI(endpoint) {
     if (!data.items) {
       throw Error('Spotify failed to fetch tracks.');
     }
+
+    await triggerRateLimiter('spotify', spotifyQueriesPerMinute, 'm');
+    console.log('');
     return data;
   });
 }

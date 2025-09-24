@@ -1,3 +1,4 @@
 /download/*
 .idea
 .DS_Store
+*.timestamps
