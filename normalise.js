@@ -37,6 +37,6 @@ async function getStat(statName, path) {
 async function normaliseFile(path, mult) {
   if (mult === 1) return;
   process.stdout.write(`Normalising ... `);
-  await execute(`sox -v ${mult} "${path}" "${path} (temp).flac"`);
-  fs.renameSync(`${path} (temp).flac`, path);
+  await execute(`sox -v ${mult} "${path}" "${path} (temp).wav"`);
+  fs.renameSync(`${path} (temp).wav`, path);
 }

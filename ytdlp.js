@@ -23,7 +23,7 @@ export async function ytdlp(ytid, playlist, filename) {
     }
     process.stdout.write('Downloading ... ');
 
-    const options = `--embed-thumbnail -f "bestaudio" -x --audio-format flac`;
+    const options = `-f "bestaudio" -x --audio-format wav`;
     const output = `--output "${createFilePath(playlist, { name: filename, ytid, normalised: false })}"`;
     const url = `https://www.youtube.com/watch?v=${ytid}`;
     const cookies = useFirefoxCookies ? '--cookies-from-browser firefox' : '';
