@@ -1,6 +1,6 @@
 import fs from 'fs';
 import process from 'node:process';
-import { youtubeDownloadsPerHour, useFirefoxCookies, maxRetries } from './config.js';
+import { youtubeDownloadsPerHour, useFirefoxCookies, maxRetries } from '../config.js';
 import { exec } from 'child_process';
 import util from 'util';
 import { createFilePath, getDownloadedFiles } from './file.js';

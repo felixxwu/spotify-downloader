@@ -1,7 +1,7 @@
 import fs from 'fs';
 import process from 'node:process';
 import { retry } from './retry.js';
-import { maxRetries } from './config.js';
+import { maxRetries } from '../config.js';
 
 export async function searchYouTube(trackname, playlist) {
   return await retry(maxRetries, 10, async () => {

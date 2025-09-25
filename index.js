@@ -1,11 +1,11 @@
-import { listSpotifyPlaylistTracks } from './spotify.js';
+import { listSpotifyPlaylistTracks } from './src/spotify.js';
 import { playlists } from './playlists.js';
-import { ytdlp } from './ytdlp.js';
-import { getMapping, searchYouTube } from './youtube.js';
+import { ytdlp } from './src/ytdlp.js';
+import { getMapping, searchYouTube } from './src/youtube.js';
 import fs from 'fs';
 import process from 'node:process';
-import { normalise } from './normalise.js';
-import { copyFileIfAlreadyDownloaded, createFilePath, getDownloadedFiles } from './file.js';
+import { normalise } from './src/normalise.js';
+import { copyFileIfAlreadyDownloaded, createFilePath, getDownloadedFiles } from './src/file.js';
 
 for (const playlist of playlists) {
   playlist.id = playlist.url.split('/playlist/')[1].split('?')[0];

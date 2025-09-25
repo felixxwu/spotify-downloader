@@ -4,7 +4,7 @@ import util from 'util';
 import fs from 'fs';
 import { createFilePath, findFile } from './file.js';
 import { retry } from './retry.js';
-import { maxRetries, RMSTarget, useNormalisation } from './config.js';
+import { maxRetries, RMSTarget, useNormalisation } from '../config.js';
 
 const execute = util.promisify(exec);
 

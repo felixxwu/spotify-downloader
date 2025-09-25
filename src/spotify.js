@@ -1,4 +1,4 @@
-import { maxRetries, spotifyQueriesPerMinute } from './config.js';
+import { maxRetries, spotifyQueriesPerMinute } from '../config.js';
 import { getToken } from './getToken.js';
 import { triggerRateLimiter } from './rateLimit.js';
 import { retry } from './retry.js';
