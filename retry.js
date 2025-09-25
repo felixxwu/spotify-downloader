@@ -1,3 +1,11 @@
+/**
+ * @template {T}
+ * @param {number} maxRetries
+ * @param {number} retryDelay
+ * @param {() => Promise<T>} fn
+ * @param {number} depth
+ * @returns {Promise<T>}
+ */
 export async function retry(maxRetries, retryDelay, fn, depth = 1) {
   if (depth > maxRetries) return;
 

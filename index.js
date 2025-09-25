@@ -5,14 +5,17 @@ import { getMapping, searchYouTube } from './youtube.js';
 import fs from 'fs';
 import process from 'node:process';
 import { normalise } from './normalise.js';
-import { useNormalisation } from './config.js';
-import { createFilePath, getDownloadedFiles } from './file.js';
+import { copyFileIfAlreadyDownloaded, createFilePath, getDownloadedFiles } from './file.js';
 
 for (const playlist of playlists) {
   playlist.id = playlist.url.split('/playlist/')[1].split('?')[0];
   await processPlaylist(playlist);
 }
 
+/**
+ *
+ * @param {{id: string, url: string, name: string}} playlist
+ */
 async function processPlaylist(playlist) {
   console.log('');
   console.log('Processing playlist:', playlist.name);
@@ -25,10 +28,11 @@ async function processPlaylist(playlist) {
     const zeros = i < 100 ? (i < 10 ? '00' : '0') : '';
     process.stdout.write(`(${zeros}${i++}/${spotifyTracks.length}) ${track.name} ${spaces}`);
 
+    copyFileIfAlreadyDownloaded(track.name, playlist);
     const ytid = await searchYouTube(track.name, playlist);
     await ytdlp(ytid, playlist, track.name);
+    await normalise(playlist, track.name, ytid);
 
-    if (useNormalisation) await normalise(playlist, track.name, ytid);
     await new Promise(resolve => setTimeout(resolve, 0));
     process.stdout.write(`Done`);
     console.log('');

@@ -1,4 +1,4 @@
-import { spotifyQueriesPerMinute } from './config.js';
+import { maxRetries, spotifyQueriesPerMinute } from './config.js';
 import { getToken } from './getToken.js';
 import { triggerRateLimiter } from './rateLimit.js';
 import { retry } from './retry.js';
@@ -10,7 +10,7 @@ const v1 = 'https://api.spotify.com/v1';
  * @returns {Promise<void>}
  */
 export async function spotifyAPI(endpoint) {
-  return await retry(5, 10, async () => {
+  return await retry(maxRetries, 10, async () => {
     process.stdout.write(`Querying Spotify: ${endpoint} - `);
     const token = await getToken();
     const response = await fetch(endpoint, {

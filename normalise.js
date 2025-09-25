@@ -4,12 +4,15 @@ import util from 'util';
 import fs from 'fs';
 import { createFilePath, findFile } from './file.js';
 import { retry } from './retry.js';
-import { RMSTarget } from './config.js';
+import { maxRetries, RMSTarget, useNormalisation } from './config.js';
 
 const execute = util.promisify(exec);
 
 export async function normalise(playlist, filename, ytid) {
-  await retry(5, 10, async () => {
+  if (!useNormalisation) return;
+  if (ytid === null) return;
+
+  await retry(maxRetries, 10, async () => {
     const { path, meta } = findFile(playlist, ytid);
 
     if (meta.normalised) return;

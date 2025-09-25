@@ -1,6 +1,6 @@
 import fs from 'fs';
 import process from 'node:process';
-import { youtubeDownloadsPerHour, useFirefoxCookies } from './config.js';
+import { youtubeDownloadsPerHour, useFirefoxCookies, maxRetries } from './config.js';
 import { exec } from 'child_process';
 import util from 'util';
 import { createFilePath, getDownloadedFiles } from './file.js';
@@ -15,7 +15,9 @@ const execute = util.promisify(exec);
  * @returns {Promise<void>}
  */
 export async function ytdlp(ytid, playlist, filename) {
-  await retry(5, 10, async () => {
+  if (ytid === null) return;
+
+  await retry(maxRetries, 10, async () => {
     fs.mkdirSync('download', { recursive: true });
     fs.mkdirSync(`download/${playlist.name}`, { recursive: true });
     const downloadedFiles = getDownloadedFiles(playlist);
