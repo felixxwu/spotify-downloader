@@ -9,6 +9,10 @@ export async function searchYouTube(trackname, playlist) {
     const ytid = mapping.find(localTrack => localTrack.name === trackname)?.ytid;
     // local cache hit, return early
     if (ytid) return ytid;
+    if (ytid === null) {
+      process.stdout.write('Skipping ... ');
+      return null;
+    }
 
     process.stdout.write('Searching ... ');
     fs.mkdirSync('mappings', { recursive: true });
