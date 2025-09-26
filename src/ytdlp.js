@@ -1,6 +1,6 @@
 import fs from 'fs';
 import process from 'node:process';
-import { youtubeDownloadsPerHour, useFirefoxCookies, maxRetries } from '../config.js';
+import { youtubeDownloadsPerHour, useFirefoxCookies, maxRetries, downloadFolder } from '../config.js';
 import { exec } from 'child_process';
 import util from 'util';
 import { createFilePath, getDownloadedFiles } from './file.js';
@@ -18,8 +18,8 @@ export async function ytdlp(ytid, playlist, filename) {
   if (ytid === null) return;
 
   await retry(maxRetries, 10, async () => {
-    fs.mkdirSync('download', { recursive: true });
-    fs.mkdirSync(`download/${playlist.name}`, { recursive: true });
+    fs.mkdirSync(downloadFolder, { recursive: true });
+    fs.mkdirSync(`${downloadFolder}/${playlist.name}`, { recursive: true });
     const downloadedFiles = getDownloadedFiles(playlist);
     if (downloadedFiles.find(file => file.ytid === ytid)) {
       return;

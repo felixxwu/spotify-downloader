@@ -1,14 +1,17 @@
 import fs from 'fs';
 import { addToMapping, getMapping } from './youtube.js';
+import { downloadFolder } from '../config.js';
 
 export function findFile(playlist, ytid) {
   const files = listFiles(playlist);
   const file = files.find(file => getFileMeta(file).ytid === ytid);
-  return { path: `download/${playlist.name}/${file}`, meta: getFileMeta(file) };
+  return { path: `${downloadFolder}/${playlist.name}/${file}`, meta: getFileMeta(file) };
 }
 
 export function createFilePath(playlist, meta) {
-  return `download/${playlist.name}/${getSafeFilename(meta.name)} [${meta.ytid}${meta.normalised ? '#N' : ''}].wav`;
+  return `${downloadFolder}/${playlist.name}/${getSafeFilename(meta.name)} [${meta.ytid}${
+    meta.normalised ? '#N' : ''
+  }].wav`;
 }
 
 export function getFileMeta(filePath) {
@@ -30,7 +33,7 @@ export function getSafeFilename(filename) {
 }
 
 export function listFiles(playlist) {
-  return fs.readdirSync(`download/${playlist.name}`).filter(file => file.endsWith('.wav'));
+  return fs.readdirSync(`${downloadFolder}/${playlist.name}`).filter(file => file.endsWith('.wav'));
 }
 
 /**
