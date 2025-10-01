@@ -4,6 +4,13 @@
 
 Edit `playlists.js` to set the Spotify playlists that you want to download.
 
+```jsx
+{
+  url: '<copy the share link from spotify>',
+  name: '<can be anything, this will be the name of the folder that is created>'
+}
+```
+
 ## Run
 
 Open the folder in a terminal and run `node index.js`. The script is designed to be re-run anytime, even if the previous
@@ -11,6 +18,10 @@ run was cancelled or got stuck. Any files that are already downloaded will not b
 
 Run the script again if your playlist changes, only new songs will be downloaded and anything that was removed from
 the playlist will also be deleted.
+
+## Rate limits
+
+The main bottleneck if you are downloading hundreds of videos is YouTube, they will start to suspect bot activity if you download too quickly and will start to limit your activity. A safe rate from my testing is ~60 per hour (change this in `config.js` if you want). This rate may be increased using Firefox cookies, but may be more risky (see Firefox section in Dependencies below).
 
 ## Incorrectly downloaded songs
 
@@ -48,10 +59,11 @@ Windows:
 ## ffmpeg
 
 https://ffmpeg.org/
+(must be added to PATH)
 
 or `brew install ffmpeg`
 
-## SoX (Sound eXchange) (optional)
+## SoX (Sound eXchange) (optional, default: true)
 
 Windows
 https://sourceforge.net/projects/sox/
@@ -60,12 +72,10 @@ https://sourceforge.net/projects/sox/
 Linux / MacOS
 `brew install sox`
 
-Used to read the RMS of the downloaded files and normalise them. This option is ENABLED by default, to turn it off set `useNormalisation` to `false` in `config.js`
+Used to read the RMS of the downloaded files and normalise them. To turn off set `useNormalisation` to `false` in `config.js`
 
-## Firefox (optional)
+## Firefox (optional, default: false)
 
-yt-dlp has a workaround (https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp) to get around
-YouTube's rate limits when downloading videos. Without this workaround you will only be able to download a few hundred
-videos before you get an error message saying that YouTube suspects you are a bot. To enable this workaround, just make
-sure you have Firefox installed, and that you are logged into YouTube with a Google account, Firefox does not need to be
-open. This workaround is DISABLED by default, to turn it on set `useFirefoxCookies` to `true` in `config.js`.
+Some videos will require you to provide a login to download, it may be that the video is age-restricted or YouTube is suspecting bot activity. yt-dlp can use your account credentials from Firefox cookies (https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp) to download these videos. To enable this, make sure you have Firefox installed, and that you are logged into YouTube with a Google account (Firefox does not need to be open). Then set `useFirefoxCookies` to `true` in `config.js`.
+
+CAUTION: if your download rate is set too high with `useFirefoxCookies` set to `true`, you might risk your Google account being temporarily suspended from watching videos on any device for a few days. I would recommend using a Google account that you don't watch YouTube with, or create a new one. 
