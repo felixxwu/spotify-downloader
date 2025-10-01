@@ -21,7 +21,7 @@ the playlist will also be deleted.
 
 ## Download location
 
-By default, the files will be downloaded into a folder called `download` in this directory. To change it, change `downloadFolder` in `config.js`. For example, if you want to download the files straight to an external drive, set it to something like `E:/download'.
+By default, the files will be downloaded into a folder called `download` in this directory. To change it, change `downloadFolder` in `config.js`. For example, if you want to download the files straight to an external drive, set it to something like `E:/download`.
 
 ## Rate limits
 
