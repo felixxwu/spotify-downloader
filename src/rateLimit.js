@@ -6,7 +6,7 @@ import fs from 'fs';
  * @param {number} maxDownloads
  * @param {'h' | 'm'} timePeriod
  */
-export async function triggerRateLimiter(name, maxDownloads, timePeriod) {
+export async function triggerRateLimiter(name, maxDownloads, timePeriod, returnEarly) {
   let timestamps = getTimestamps(name);
 
   const timePeriodMS = timePeriod === 'h' ? 1000 * 60 * 60 : 1000 * 60;
@@ -14,16 +14,29 @@ export async function triggerRateLimiter(name, maxDownloads, timePeriod) {
   timestamps = timestamps.filter(t => t > Date.now() - timePeriodMS);
   fs.writeFileSync(`${name}.timestamps`, JSON.stringify(timestamps), 'utf8');
 
-  process.stdout.write(`${timestamps.length}/${timePeriod} ... `);
+  process.stdout.write(`(${timestamps.length}/${timePeriod}) `);
 
-  if (timestamps.length >= maxDownloads) {
+  if (timestamps.length > maxDownloads) {
+    if (returnEarly) return true;
+
     const oldestTimestamp = Math.min(...timestamps);
     const oldestPlusTimePeriod = oldestTimestamp + timePeriodMS;
     const waitTime = oldestPlusTimePeriod - Date.now();
     const waitTimeMinutes = waitTime / 1000 / 60;
     process.stdout.write(`Sleeping (${Math.floor(waitTimeMinutes)}m ${Math.round((waitTimeMinutes % 1) * 60)}s) ... `);
     await new Promise(resolve => setTimeout(resolve, waitTime));
+    return true;
   }
+  return false;
+}
+
+export function getCurrentRate(name, timePeriod) {
+  let timestamps = getTimestamps(name);
+
+  const timePeriodMS = timePeriod === 'h' ? 1000 * 60 * 60 : 1000 * 60;
+  timestamps = timestamps.filter(t => t > Date.now() - timePeriodMS);
+
+  return timestamps.length;
 }
 
 /**

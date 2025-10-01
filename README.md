@@ -19,9 +19,13 @@ run was cancelled or got stuck. Any files that are already downloaded will not b
 Run the script again if your playlist changes, only new songs will be downloaded and anything that was removed from
 the playlist will also be deleted.
 
+## Download location
+
+By default, the files will be downloaded into a folder called `download` in this directory. To change it, change `downloadFolder` in `config.js`. For example, if you want to download the files straight to an external drive, set it to something like `E:/download'.
+
 ## Rate limits
 
-The main bottleneck if you are downloading hundreds of videos is YouTube, they will start to suspect bot activity if you download too quickly and will start to limit your activity. A safe rate from my testing is ~60 per hour (change this in `config.js` if you want). This rate may be increased using Firefox cookies, but may be more risky (see Firefox section in Dependencies below).
+The main bottleneck if you are downloading hundreds of videos is YouTube, they will start to suspect bot activity if you download too quickly and will start to limit your activity. A safe rate from my testing is ~60 per hour (change this by setting `youtubeDownloadsPerHour` in `config.js` if you want). This rate may be increased using Firefox cookies, but may be more risky (see Firefox section in Dependencies below).
 
 ## Incorrectly downloaded songs
 
@@ -76,6 +80,6 @@ Used to read the RMS of the downloaded files and normalise them. To turn off set
 
 ## Firefox (optional, default: false)
 
-Some videos will require you to provide a login to download, it may be that the video is age-restricted or YouTube is suspecting bot activity. yt-dlp can use your account credentials from Firefox cookies (https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp) to download these videos. To enable this, make sure you have Firefox installed, and that you are logged into YouTube with a Google account (Firefox does not need to be open). Then set `useFirefoxCookies` to `true` in `config.js`.
+Some videos will require you to provide a login to download, it may be that the video is age-restricted or YouTube is suspecting bot activity. yt-dlp can use your account credentials from Firefox cookies (https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp) to download these videos. To enable this, make sure you have Firefox installed, and that you are logged into YouTube with a Google account (Firefox does not need to be open). Then set `useFirefoxCookies` to `true` in `config.js`. With this setting enabled, the script will first try to download using an anonymous account, and only if that fails will it use the authenticated account. The rate limit set by `youtubeDownloadsPerHour` will apply independently.
 
-CAUTION: if your download rate is set too high with `useFirefoxCookies` set to `true`, you might risk your Google account being temporarily suspended from watching videos on any device for a few days. I would recommend using a Google account that you don't watch YouTube with, or create a new one. 
+CAUTION: if your download rate is set too high with `useFirefoxCookies` set to `true`, you might risk your Google account being temporarily suspended from watching videos on any device for a few days. I would recommend using a Google account that you don't watch YouTube with, or create a new one.

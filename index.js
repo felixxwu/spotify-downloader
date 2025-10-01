@@ -6,6 +6,16 @@ import fs from 'fs';
 import process from 'node:process';
 import { normalise } from './src/normalise.js';
 import { copyFileIfAlreadyDownloaded, createFilePath, getDownloadedFiles } from './src/file.js';
+import { autoUpdateYTDLP } from './config.js';
+import { execute } from './src/execute.js';
+
+if (autoUpdateYTDLP) {
+  try {
+    await execute('yt-dlp -U');
+  } catch (e) {
+    console.log(e);
+  }
+}
 
 for (const playlist of playlists) {
   playlist.id = playlist.url.split('/playlist/')[1].split('?')[0];

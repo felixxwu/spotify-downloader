@@ -1,13 +1,10 @@
 import fs from 'fs';
 import process from 'node:process';
 import { youtubeDownloadsPerHour, useFirefoxCookies, maxRetries, downloadFolder } from '../config.js';
-import { exec } from 'child_process';
-import util from 'util';
 import { createFilePath, getDownloadedFiles } from './file.js';
 import { retry } from './retry.js';
-import { triggerRateLimiter } from './rateLimit.js';
-
-const execute = util.promisify(exec);
+import { getCurrentRate, triggerRateLimiter } from './rateLimit.js';
+import { execute } from './execute.js';
 
 /**
  *
@@ -17,21 +14,29 @@ const execute = util.promisify(exec);
 export async function ytdlp(ytid, playlist, filename) {
   if (ytid === null) return;
 
-  await retry(maxRetries, 10, async () => {
+  await retry(maxRetries, 10, async retryCount => {
     fs.mkdirSync(downloadFolder, { recursive: true });
     fs.mkdirSync(`${downloadFolder}/${playlist.name}`, { recursive: true });
     const downloadedFiles = getDownloadedFiles(playlist);
     if (downloadedFiles.find(file => file.ytid === ytid)) {
       return;
     }
-    process.stdout.write('Downloading ... ');
+
+    const anonymousRate = getCurrentRate('yt', 'h');
+    const wasRateLimited = anonymousRate >= youtubeDownloadsPerHour;
+    const useCookies = useFirefoxCookies && (retryCount > 1 || wasRateLimited);
+    if (useCookies) {
+      await triggerRateLimiter('yt-cookies', youtubeDownloadsPerHour, 'h');
+    } else {
+      await triggerRateLimiter('yt', youtubeDownloadsPerHour, 'h');
+    }
+
+    process.stdout.write(`Downloading ${useCookies ? '(with cookies) ' : ''}... `);
 
     const options = `-f "bestaudio" -x --audio-format wav`;
     const output = `--output "${createFilePath(playlist, { name: filename, ytid, normalised: false })}"`;
     const url = `https://www.youtube.com/watch?v=${ytid}`;
-    const cookies = useFirefoxCookies ? '--cookies-from-browser firefox' : '';
+    const cookies = useCookies ? '--cookies-from-browser firefox' : '';
     await execute(`yt-dlp ${options} ${output} ${url} ${cookies}`);
-
-    await triggerRateLimiter('yt', youtubeDownloadsPerHour, 'h');
   });
 }

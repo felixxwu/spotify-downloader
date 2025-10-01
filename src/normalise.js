@@ -1,12 +1,9 @@
 import process from 'node:process';
-import { exec } from 'child_process';
-import util from 'util';
 import fs from 'fs';
 import { createFilePath, findFile } from './file.js';
 import { retry } from './retry.js';
 import { maxRetries, RMSTarget, useNormalisation } from '../config.js';
-
-const execute = util.promisify(exec);
+import { execute } from './execute.js';
 
 export async function normalise(playlist, filename, ytid) {
   if (!useNormalisation) return;

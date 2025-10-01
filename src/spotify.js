@@ -11,7 +11,9 @@ const v1 = 'https://api.spotify.com/v1';
  */
 export async function spotifyAPI(endpoint) {
   return await retry(maxRetries, 10, async () => {
-    process.stdout.write(`Querying Spotify: ${endpoint} - `);
+    await triggerRateLimiter('spotify', spotifyQueriesPerMinute, 'm');
+
+    process.stdout.write(`Querying Spotify: ${endpoint} `);
     const token = await getToken();
     const response = await fetch(endpoint, {
       method: 'GET',
@@ -24,7 +26,6 @@ export async function spotifyAPI(endpoint) {
       throw Error('Spotify failed to fetch tracks.');
     }
 
-    await triggerRateLimiter('spotify', spotifyQueriesPerMinute, 'm');
     console.log('');
     return data;
   });
