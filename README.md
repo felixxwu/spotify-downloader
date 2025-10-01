@@ -52,7 +52,7 @@ https://nodejs.org/
 
 ## yt-dlp
 
-yt-dlp is used to download and convert songs from YouTube.
+yt-dlp is popular and well-maintained command line audio/video downloader used to download and convert songs from YouTube. (https://github.com/yt-dlp/yt-dlp)
 
 Linux / MacOS
 `brew install yt-dlp`
